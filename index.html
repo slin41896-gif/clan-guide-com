@@ -1,0 +1,458 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+  <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FMJBGLWMNB"></script>
+  <script>
+    window.dataLayer=window.dataLayer||[];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js',new Date());
+    gtag('config','G-FMJBGLWMNB');
+  </script>
+
+  <title>資訊不完全博弈研究，多人棋牌遊戲的均衡策略分析 | 棋牌策略研究站</title>
+  <meta name="description" content="以賽局理論與決策科學框架，深度研究麻將、撲克等資訊不完全多人博弈的均衡策略，探索不確定環境下的最優決策模型。BDUK 推薦站。">
+  <link rel="canonical" href="https://clan-guide.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="資訊不完全博弈研究，多人棋牌遊戲的均衡策略分析 | 棋牌策略研究站">
+  <meta property="og:description" content="以賽局理論與決策科學框架，深度研究麻將、撲克等資訊不完全多人博弈的均衡策略，探索不確定環境下的最優決策模型。">
+  <meta property="og:url" content="https://clan-guide.com/">
+  <meta property="og:image" content="https://clan-guide.com/og-image.png">
+  <meta property="og:locale" content="zh_HK">
+  <meta property="og:site_name" content="棋牌策略研究站">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="資訊不完全博弈研究，多人棋牌遊戲的均衡策略分析 | 棋牌策略研究站">
+  <meta name="twitter:description" content="以賽局理論與決策科學框架，深度研究麻將、撲克等資訊不完全多人博弈的均衡策略，探索不確定環境下的最優決策模型。">
+  <meta name="twitter:image" content="https://clan-guide.com/og-image.jpg">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://clan-guide.com/#website",
+        "url": "https://clan-guide.com/",
+        "name": "棋牌策略研究站",
+        "publisher": { "@id": "https://clan-guide.com/#organization" }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://clan-guide.com/#organization",
+        "name": "棋牌策略研究站",
+        "url": "https://clan-guide.com/",
+        "logo": { "@type": "ImageObject", "url": "https://clan-guide.com/LOGO.svg" },
+        "parentOrganization": {"@type": "Organization", "name": "BDUK", "url": "https://businessdirectory-uk.com/"}
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "麻將的基本概率如何計算？",
+            "acceptedAnswer": { "@type": "Answer", "text": "麻將的概率計算基礎：標準廣東麻將使用144張牌（含花牌），起手13張後，有效牌的計算基於可用牌數除以剩餘牌數。聽牌時需考慮：已知牌（自己手牌）、可見牌（台面廢牌），以及相同牌面最多4張的限制。例如聽單騎將牌時，可用牌數除以未知牌總數即為摸到和牌的單次概率，一般在2-8%不等。" }
+          },
+          {
+            "@type": "Question",
+            "name": "納什均衡在多人棋牌遊戲中如何理解？",
+            "acceptedAnswer": { "@type": "Answer", "text": "納什均衡是指所有玩家都選擇「給定其他玩家策略，自己無法通過單方面改變策略來獲益」的狀態。在麻將等多人棋牌遊戲中，純策略納什均衡難以直接應用，因為信息不完全且聯盟策略影響明顯。更實用的是混合策略均衡——在某些決策點以特定概率隨機化選擇，讓對手無法預測你的出牌模式，解釋了為什麼頂級麻將玩家的策略難以被完全讀透。" }
+          },
+          {
+            "@type": "Question",
+            "name": "圍棋AI突破如何改變人類對圍棋的理解？",
+            "acceptedAnswer": { "@type": "Answer", "text": "AlphaGo及其後繼系統對圍棋認知產生三個革命性影響：（1）推翻傳統價值觀——許多被認為「厚味」的傳統下法被AI評估為效率偏低；（2）發現新型棋形——人類從未大規模採用的棋形在AI對局中被證明高效；（3）重新定義布局理論——AI顯示快速確立實地比傳統重視的「厚勢」更能量化勝率優勢。職業棋手如柯潔已大量研究AI棋譜，形成了顯著不同於舊時代的現代圍棋美學。" }
+          },
+          {
+            "@type": "Question",
+            "name": "遊戲「深度」是如何在設計層面實現的？",
+            "acceptedAnswer": { "@type": "Answer", "text": "遊戲設計中的「深度」通常由三個要素構成：（1）決策空間廣度——每個決策點有多少有意義的選項；（2）反饋清晰度——玩家能否準確理解自己決策的後果；（3）互動複雜性——玩家選擇之間的相互影響是否足夠豐富。國際象棋的深度來自棋盤狀態的龐大搜索空間（每步平均35種選擇）；麻將的深度來自信息不完全環境下的多人互動。" }
+          },
+          {
+            "@type": "Question",
+            "name": "學習策略遊戲對認知能力有什麼研究發現？",
+            "acceptedAnswer": { "@type": "Answer", "text": "認知科學的多項研究發現策略遊戲學習與認知發展的相關性：（1）工作記憶提升——長期圍棋訓練可增強前額葉工作記憶容量；（2）前瞻思維訓練——棋類遊戲要求多步預判，與規劃能力的神經發展相關；（3）注意力集中——需要長時間維持高度注意力的棋局練習與注意力調節能力相關。研究同時指出這些效益是否能遷移到非遊戲情境仍有爭議。" }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="style-color.css">
+  <link rel="stylesheet" href="style-base.css">
+  <link rel="stylesheet" href="style-layout.css">
+</head>
+<body>
+
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="https://clan-guide.com/" class="header-logo">
+      <img src="/LOGO.svg" alt="棋牌策略研究站 logo" onerror="this.style.display='none'">
+      棋牌策略研究站
+    </a>
+    <nav class="header-nav" aria-label="主導覽">
+      <a href="https://clan-guide.com/blog.html" class="nav-link">攻略中心</a>
+      <a href="https://clan-guide.com/about.html" class="nav-link">關於我們</a>
+    </nav>
+    <a href="https://businessdirectory-uk.com/utm_source=strategy-game-lab&utm_medium=referral&utm_campaign=satellite-network&utm_content=header-cta" class="btn btn-primary btn-sm" target="_blank" rel="noopener">立即前往</a>
+  </div>
+</header>
+
+<!-- ── HERO C ── -->
+<section class="hero-c" aria-label="主頁橫幅">
+  <div class="hero-c-content">
+    <div class="hero-c-badge">
+      <span class="live-dot"></span>
+      棋牌策略 權威分析平台
+    </div>
+    <h1 class="hero-c-title">
+      棋牌博弈<span class="accent">策略</span><br>均衡決策分析
+    </h1>
+    <p class="hero-c-subtitle">
+      由資深分析師 鄺翠芸 主理，每日更新深度數據分析與策略指南。
+    </p>
+
+    <!-- Stats Row -->
+    <div class="hero-c-stats">
+      <div class="hero-c-stat">
+        <div class="hero-c-stat-num">100+</div>
+        <div class="hero-c-stat-label">深度文章</div>
+      </div>
+      <div class="hero-c-stat">
+        <div class="hero-c-stat-num">每日</div>
+        <div class="hero-c-stat-label">更新資訊</div>
+      </div>
+      <div class="hero-c-stat">
+        <div class="hero-c-stat-num">15+</div>
+        <div class="hero-c-stat-label">年行業經驗</div>
+      </div>
+    </div>
+
+    <div class="hero-c-cta">
+      <a href="https://businessdirectory-uk.com/utm_source=strategy-game-lab&utm_medium=referral&utm_campaign=satellite-network&utm_content=hero-cta" class="btn btn-primary btn-lg" target="_blank" rel="noopener">前往官方平台</a>
+      <a href="https://clan-guide.com/blog.html" class="btn btn-outline btn-lg" style="color:var(--clr-text-inv);border-color:var(--clr-border-dark);">閱讀攻略</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRENDING BAR ─────────────────────────────────────────── -->
+<div class="trending-bar" aria-label="熱門話題">
+  <div class="trending-bar-inner">
+    <span class="trending-label">熱門話題</span>
+    <div class="trending-tags" id="trending-tags">
+      <a href="https://clan-guide.com/blog.html" class="trending-tag">攻略技巧</a>
+      <a href="https://clan-guide.com/blog.html" class="trending-tag">數據分析</a>
+      <a href="https://clan-guide.com/blog.html" class="trending-tag">新手入門</a>
+      <a href="https://clan-guide.com/blog.html" class="trending-tag">策略指南</a>
+      <a href="https://clan-guide.com/blog.html" class="trending-tag">最新資訊</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── GAME CATEGORIES ──────────────────────────────────────── -->
+<section class="section bg-alt">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">遊戲 <span class="accent">分類指南</span></h2>
+    </div>
+    <div class="featured-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-1">麻將數學與策略研究</span></div>
+          <p class="card-excerpt">以博弈論框架系統分析麻將的手牌機率計算、聽牌效率優化與出牌策略決策，結合現代統計方法揭示麻將的深層數學結構。</p>
+          <a href="https://clan-guide.com/blog.html" class="card-footer" style="color:var(--clr-accent);font-weight:700;font-size:13px;text-decoration:none;">查看攻略 →</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-2">棋牌博弈論應用</span></div>
+          <p class="card-excerpt">研究納什均衡、最小最大策略與信息不完全理論在棋牌遊戲中的應用，探討多人博弈環境下的策略均衡與理性決策框架。</p>
+          <a href="https://clan-guide.com/blog.html" class="card-footer" style="color:var(--clr-accent);font-weight:700;font-size:13px;text-decoration:none;">查看攻略 →</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-3">策略遊戲設計分析</span></div>
+          <p class="card-excerpt">深度解析策略遊戲的機制設計原理，研究獎勵系統、進度曲線與玩家決策空間設計如何影響遊戲的策略深度與可玩性。</p>
+          <a href="https://clan-guide.com/blog.html" class="card-footer" style="color:var(--clr-accent);font-weight:700;font-size:13px;text-decoration:none;">查看攻略 →</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-4">傳統棋盤遊戲研究</span></div>
+          <p class="card-excerpt">追蹤圍棋、象棋、國際象棋等傳統棋盤遊戲的現代計算機研究進展，分析AI對局數據如何深化人類對傳統棋藝的理解。</p>
+          <a href="https://clan-guide.com/blog.html" class="card-footer" style="color:var(--clr-accent);font-weight:700;font-size:13px;text-decoration:none;">查看攻略 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURED ARTICLES ────────────────────────────────────── -->
+<section class="featured-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">最新 <span class="accent">攻略文章</span></h2>
+      <a href="https://clan-guide.com/blog.html" class="btn btn-outline btn-sm">查看全部</a>
+    </div>
+    <div class="featured-grid" id="articles-grid">
+      <!-- JS rendered -->
+<!-- BLOG_INJECT_START -->
+    <a href="blog/live-dealer-vs-rng-comparison.html" class="bp-card">
+      <span class="bp-cat">undefined</span>
+      <h3>真人荷官與電腦荷官之比較研究：機制差異、公平性與玩家體驗分析</h3>
+      <p class="bp-desc">講到線上賭場，我哋成日都掙扎，究竟真人荷官同電腦荷官，邊個先係我哋嘅心水？等我哋一齊揭開佢哋嘅神秘面紗！</p>
+      <div class="bp-footer"><span>2026-06-03</span><span class="bp-read-more">閱讀全文 →</span></div>
+    </a>
+    <a href="blog/card-counting-legal-status-global-21-point.html" class="bp-card">
+      <span class="bp-cat">undefined</span>
+      <h3>算牌技術在21點賭局中的法律地位：全球司法管轄區比較研究</h3>
+      <p class="bp-desc">我哋賭仔最關心嘅，莫過於點樣用策略贏錢。但21點算牌呢招，究竟係咪合法？真係令人頭痕！</p>
+      <div class="bp-footer"><span>2026-06-02</span><span class="bp-read-more">閱讀全文 →</span></div>
+    </a>
+    <a href="blog/article.html" class="bp-card">
+      <span class="bp-cat">General</span>
+      <h3>article</h3>
+      <p class="bp-desc">{</p>
+      <div class="bp-footer"><span>2026-06-02</span><span class="bp-read-more">閱讀全文 →</span></div>
+    </a>
+    <!-- BLOG_INJECT_END -->
+    </div>
+  </div>
+</section>
+
+<!-- ── BENEFITS ──────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">為什麼選擇 <span class="accent">棋牌策略研究站</span></h2>
+    </div>
+    <div class="featured-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+      <div class="card">
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-1">博弈論深度解析</span></div>
+          <p class="card-excerpt">以數學博弈論視角系統分析多人策略遊戲的均衡解，幫助讀者建立理性、科學的策略思維框架，超越單純依賴直覺的遊戲方式。</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-2">麻將數學系統化</span></div>
+          <p class="card-excerpt">以概率計算與期望值分析系統化麻將決策，涵蓋起手選牌策略、打牌效率優化與聽牌轉換時機，提供有數學依據的麻將研究。</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-3">AI棋局研究成果</span></div>
+          <p class="card-excerpt">追蹤AlphaGo、Stockfish等AI系統在棋類遊戲的最新研究成果，分析機器學習如何革新人類對傳統棋藝的理解與訓練方法。</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-4">設計原理教育</span></div>
+          <p class="card-excerpt">解析策略遊戲設計的核心原則，幫助讀者理解遊戲系統的底層邏輯，從設計者視角重新認識策略遊戲的規則結構。</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-5">文化歷史背景</span></div>
+          <p class="card-excerpt">深度介紹麻將、圍棋、象棋等亞洲傳統遊戲的文化歷史背景，在數學分析之外提供豐富的文化脈絡，增進對遊戲起源的理解。</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="card-meta"><span class="tag tag-1">學術研究視角</span></div>
+          <p class="card-excerpt">引用認知科學、心理學與數學領域的學術研究，以嚴謹的研究視角解讀策略遊戲的認知挑戰與學習曲線特性。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MAIN CONTENT + SIDEBAR ───────────────────────────────── -->
+<section class="section bg-alt">
+  <div class="container">
+    <div class="content-with-sidebar">
+
+      <!-- Main: Recent Articles -->
+      <div>
+        <div class="section-divider">
+          <h2 class="section-title">近期文章</h2>
+        </div>
+        <div id="recent-articles">
+          <div class="article-row">
+            <div class="article-row-img" style="background:var(--clr-bg);"></div>
+            <div>
+              <a href="https://clan-guide.com/blog.html" class="article-row-title">文章持續更新中，敬請期待更多專業分析...</a>
+              <div class="article-row-date">最新更新</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:var(--space-6);text-align:center;">
+          <a href="https://clan-guide.com/blog.html" class="btn btn-outline">查看所有文章</a>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside>
+        <div class="sidebar-widget">
+          <div class="sidebar-widget-title">關於作者</div>
+          <div class="author-byline" style="flex-direction:column;align-items:flex-start;gap:var(--space-3);">
+            <img src="https://api.dicebear.com/9.x/notionists/png?seed=kwong-chui-wan&size=200&backgroundColor=fff7ed" alt="鄺翠芸" style="width:64px;height:64px;border-radius:50%;border:3px solid var(--clr-accent);display:block;object-fit:cover;margin-bottom:var(--space-2);">
+            <div>
+              <div class="author-name" style="font-size:16px;margin-bottom:4px;">鄺翠芸</div>
+              <div style="font-size:13px;color:var(--clr-accent);font-weight:700;">棋牌遊戲策略數學研究員</div>
+            </div>
+            <p style="font-size:13px;color:var(--clr-text-muted);line-height:1.6;">香港大學純數學系博士候選人，從事棋牌博弈論應用研究逾15年。系統研究德州撲克GTO均衡策略、麻將多人博弈信息不對稱及橋牌叫牌理論的數學基礎，為多本棋牌策略書籍擔任數學顧問。</p>
+            <a href="https://clan-guide.com/about.html" class="btn btn-ghost btn-sm">了解更多</a>
+          </div>
+        </div>
+
+        <div class="sidebar-widget">
+          <div class="sidebar-widget-title">熱門標籤</div>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);">
+            <a href="https://clan-guide.com/blog.html" class="tag tag-outline" style="margin-bottom:4px;">攻略技巧</a>
+            <a href="https://clan-guide.com/blog.html" class="tag tag-outline" style="margin-bottom:4px;">數據分析</a>
+            <a href="https://clan-guide.com/blog.html" class="tag tag-outline" style="margin-bottom:4px;">策略指南</a>
+            <a href="https://clan-guide.com/blog.html" class="tag tag-outline" style="margin-bottom:4px;">新手入門</a>
+          </div>
+        </div>
+
+        <div class="sidebar-widget" style="background:var(--clr-bg-dark);border-color:var(--clr-border-dark);">
+          <div class="sidebar-widget-title">立即前往</div>
+          <p style="font-size:13px;color:var(--clr-text-inv-muted);margin-bottom:var(--space-4);line-height:1.6;">取得最新優惠及資訊，立即前往官方平台。</p>
+          <a href="https://businessdirectory-uk.com/utm_source=strategy-game-lab&utm_medium=referral&utm_campaign=satellite-network&utm_content=sidebar-cta" class="btn btn-primary" target="_blank" rel="noopener" style="width:100%;justify-content:center;">前往官網</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ──────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container" style="max-width:720px;">
+    <h2 class="section-title">常見問題</h2>
+    <div class="faq-section">
+      <div class="faq-item">
+        <div class="faq-q">麻將的基本概率如何計算？</div>
+        <div class="faq-a">麻將的概率計算基礎：標準廣東麻將使用144張牌（含花牌），起手13張後，有效牌的計算基於可用牌數除以剩餘牌數。聽牌時需考慮：已知牌（自己手牌）、可見牌（台面廢牌），以及相同牌面最多4張的限制。例如聽單騎將牌時，可用牌數除以未知牌總數即為摸到和牌的單次概率，一般在2-8%不等。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">納什均衡在多人棋牌遊戲中如何理解？</div>
+        <div class="faq-a">納什均衡是指所有玩家都選擇「給定其他玩家策略，自己無法通過單方面改變策略來獲益」的狀態。在麻將等多人棋牌遊戲中，純策略納什均衡難以直接應用，因為信息不完全且聯盟策略影響明顯。更實用的是混合策略均衡——在某些決策點以特定概率隨機化選擇，讓對手無法預測你的出牌模式，解釋了為什麼頂級麻將玩家的策略難以被完全讀透。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">圍棋AI突破如何改變人類對圍棋的理解？</div>
+        <div class="faq-a">AlphaGo及其後繼系統對圍棋認知產生三個革命性影響：（1）推翻傳統價值觀——許多被認為「厚味」的傳統下法被AI評估為效率偏低；（2）發現新型棋形——人類從未大規模採用的棋形在AI對局中被證明高效；（3）重新定義布局理論——AI顯示快速確立實地比傳統重視的「厚勢」更能量化勝率優勢。職業棋手如柯潔已大量研究AI棋譜，形成了顯著不同於舊時代的現代圍棋美學。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">遊戲「深度」是如何在設計層面實現的？</div>
+        <div class="faq-a">遊戲設計中的「深度」通常由三個要素構成：（1）決策空間廣度——每個決策點有多少有意義的選項；（2）反饋清晰度——玩家能否準確理解自己決策的後果；（3）互動複雜性——玩家選擇之間的相互影響是否足夠豐富。國際象棋的深度來自棋盤狀態的龐大搜索空間（每步平均35種選擇）；麻將的深度來自信息不完全環境下的多人互動。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">學習策略遊戲對認知能力有什麼研究發現？</div>
+        <div class="faq-a">認知科學的多項研究發現策略遊戲學習與認知發展的相關性：（1）工作記憶提升——長期圍棋訓練可增強前額葉工作記憶容量；（2）前瞻思維訓練——棋類遊戲要求多步預判，與規劃能力的神經發展相關；（3）注意力集中——需要長時間維持高度注意力的棋局練習與注意力調節能力相關。研究同時指出這些效益是否能遷移到非遊戲情境仍有爭議。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA BANNER ────────────────────────────────────────────── -->
+<section class="section container">
+  <div class="cta-banner">
+    <h2>準備好了嗎？</h2>
+    <p>立即前往官方平台，獲取最新優惠與資訊。</p>
+    <a href="https://businessdirectory-uk.com/utm_source=strategy-game-lab&utm_medium=referral&utm_campaign=satellite-network&utm_content=banner-cta" class="btn btn-primary btn-lg" target="_blank" rel="noopener">立即前往</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">棋牌策略研究站</div>
+        <p class="footer-tagline">以賽局理論與決策科學框架，深度研究麻將、撲克等資訊不完全多人博弈的均衡策略，探索不確定環境下的最優決策模型。</p>
+      </div>
+      <div>
+        <div class="footer-col-title">內容分類</div>
+        <a href="https://clan-guide.com/blog.html" class="footer-link">攻略中心</a>
+        <a href="https://clan-guide.com/blog.html" class="footer-link">數據分析</a>
+        <a href="https://clan-guide.com/blog.html" class="footer-link">新手指南</a>
+      </div>
+      <div>
+        <div class="footer-col-title">關於</div>
+        <a href="https://clan-guide.com/about.html" class="footer-link">關於我們</a>
+        <a href="https://businessdirectory-uk.com/utm_source=strategy-game-lab&utm_medium=referral&utm_campaign=satellite-network&utm_content=footer-link" class="footer-link" target="_blank" rel="noopener">官方平台</a>
+      </div>
+      <div>
+        <div class="footer-col-title">法律聲明</div>
+        <a href="https://clan-guide.com/privacy.html" class="footer-link">私隱政策</a>
+        <a href="https://clan-guide.com/terms.html" class="footer-link">使用條款</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="footer-year">2026</span> 棋牌策略研究站. 所有內容僅供參考。</span>
+      <span>本站為獨立媒體，不代表任何平台立場。</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+  // Load recent articles from blog-recent.json
+  fetch('/data/blog-recent.json')
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (!data || !data.articles || !data.articles.length) return;
+      const grid = document.getElementById('articles-grid');
+      const recent = document.getElementById('recent-articles');
+      const articles = data.articles.slice(0, 6);
+      if (articles.length >= 3) {
+        grid.innerHTML = articles.slice(0,3).map((a, i) => `
+          <div class="card">
+            <img class="card-img" src="${a.imageUrl || ''}" alt="${a.title}" loading="lazy"
+              onerror="this.style.background='var(--clr-bg-alt)';this.src=''">
+            <div class="card-body">
+              <div class="card-meta"><span class="tag tag-${(i%5)+1}">${a.category || '攻略'}</span></div>
+              <a href="/blog/${a.slug}" class="card-title">${a.title}</a>
+              <p class="card-excerpt">${a.excerpt || a.metaDesc || ''}</p>
+              <div class="card-footer">
+                <span>${a.date || ''}</span>
+                <a href="/blog/${a.slug}" style="color:var(--clr-accent);font-weight:700;font-size:12px;">閱讀全文 →</a>
+              </div>
+            </div>
+          </div>`).join('');
+      }
+      if (articles.length) {
+        recent.innerHTML = articles.map((a, i) => `
+          <div class="article-row">
+            <img class="article-row-img" src="${a.imageUrl || ''}" alt="${a.title}" loading="lazy"
+              onerror="this.style.background='var(--clr-bg-alt)';this.src=''">
+            <div>
+              <a href="/blog/${a.slug}" class="article-row-title">${a.title}</a>
+              <div class="article-row-date">${a.date || ''}</div>
+            </div>
+          </div>`).join('');
+        if (articles[0]) {
+          document.getElementById('hero-title').textContent = articles[0].title;
+          document.getElementById('hero-excerpt').textContent = articles[0].excerpt || articles[0].metaDesc || '';
+          if (articles[0].category) document.getElementById('hero-cat').textContent = articles[0].category;
+          if (articles[0].date) document.getElementById('hero-date').textContent = articles[0].date;
+        }
+      }
+    }).catch(() => {});
+</script>
+</body>
+</html>
